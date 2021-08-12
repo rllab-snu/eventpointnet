@@ -14,7 +14,7 @@ Argument for the method is as follows
 With the arguments above, you can run the code by executing `run.py`.
 
 ```bash
-python run.py --mode <MODE> --model <MODEL> 
+python run.py --width <WIDTH> --height <HEIGHT> 
 ```
 
 ## Dependencies

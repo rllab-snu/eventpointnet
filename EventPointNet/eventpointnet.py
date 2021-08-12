@@ -84,7 +84,7 @@ class CEventPointNet(CVisualLocalizationCore):
         pts[0, :] = ys
         pts[1, :] = xs
         pts[2, :] = heatmap[xs, ys]
-        pts, _ = self.__Nms_fast(pts, H, W, 5)
+        pts, _ = self.__NMS(pts, H, W, 5)
         ys = pts[0, :]
         xs = pts[1, :]
         if(len(self.__ImageOriginal.shape) >= 3):
@@ -107,7 +107,7 @@ class CEventPointNet(CVisualLocalizationCore):
         oHeatmap = ((heatmap - np.min(heatmap)) * 255 / (np.max(heatmap) - np.min(heatmap))).astype(np.uint8)
         return vKpt, vDesc, oHeatmap
 
-    def __Nms_fast(self, in_corners, H, W, dist_thresh):
+    def __NMS(self, in_corners, H, W, dist_thresh):
         mGrid = np.zeros((H, W)).astype(int) 
         mInds = np.zeros((H, W)).astype(int) 
         
