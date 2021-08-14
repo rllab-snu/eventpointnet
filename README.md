@@ -7,7 +7,7 @@ Argument for the method is as follows
 | Argument | Abbreviation | Description | Option |
 |---|:---:|:---:|:---:|
 |`--width`|`-W`| Resize width (Optional) |default = `None`|
-|`--width`|`-W`| Resize height (Optional) |default = `None`|
+|`--height`|`-H`| Resize height (Optional) |default = `None`|
 
 <br>
 
