@@ -27,4 +27,4 @@ scikit-image 0.18.1
 numpy 1.19.2
 ```
 
-Aside from above dependencies, docker container for this repository is provided [here](https://hub.docker.com/r/howoongjun/eventpointnet)
+Aside from above dependencies, docker container for this repository is provided [here](https://hub.docker.com/r/rllabsnu/eventpointnet)
