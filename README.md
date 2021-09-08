@@ -1,4 +1,4 @@
-# EventPointNet: Supervised keypoint detector with neuromorphic camera data
+# EventPointNet: Robust keypoint detector with neuromorphic camera data
 This repository provides python implementation of supervised keypoint detector with neuromorphic camera data, known as EventPointNet. 
 
 ## How to run
