@@ -10,7 +10,7 @@
 ###
 
 from EventPointNet.eventpointnet import CEventPointNet
-import argparse
+import argparse, time
 from skimage import io, color
 from skimage.transform import resize
 import numpy as np
@@ -28,6 +28,7 @@ if __name__ == "__main__":
     oImage = io.imread("./test.jpg")
     if(args.width is not None and args.height is not None):
         oImage = resize(oImage, (args.height, args.width))
+        oImage = (oImage * 255).astype(np.uint8)
     # Convert RGB to Grayscale and rescale pixel value into [0, 255]
     oImageGray = (color.rgb2gray(oImage) * 255).astype(np.uint8)
     oImageGray = np.expand_dims(np.asarray(oImageGray), axis=0)
@@ -36,5 +37,5 @@ if __name__ == "__main__":
     oEventPointNet = CEventPointNet()
     oEventPointNet.Open()
     oEventPointNet.Setting(eSettingCmd.eSettingCmd_IMAGE_DATA_GRAY, oImageGray)
-
+    ckTime = time.time()
     vKpt, vDesc, vHeatmap = oEventPointNet.Read()

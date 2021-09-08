@@ -5,7 +5,7 @@
 #       @Org            Robot Learning Lab(https://rllab.snu.ac.kr), Seoul National University
 #       @Author         Howoong Jun (howoong.jun@rllab.snu.ac.kr)
 #       @Date           Aug. 12, 2021
-#       @Version        v0.1
+#       @Version        v0.1.1
 #
 ###
 
@@ -84,7 +84,7 @@ class CEventPointNet(CVisualLocalizationCore):
         pts[0, :] = ys
         pts[1, :] = xs
         pts[2, :] = heatmap[xs, ys]
-        pts, _ = self.__NMS(pts, H, W, 5)
+        pts = self.__NMS(pts, H, W, 9)
         ys = pts[0, :]
         xs = pts[1, :]
         if(len(self.__ImageOriginal.shape) >= 3):
@@ -107,42 +107,38 @@ class CEventPointNet(CVisualLocalizationCore):
         oHeatmap = ((heatmap - np.min(heatmap)) * 255 / (np.max(heatmap) - np.min(heatmap))).astype(np.uint8)
         return vKpt, vDesc, oHeatmap
 
-    def __NMS(self, in_corners, H, W, dist_thresh):
-        mGrid = np.zeros((H, W)).astype(int) 
-        mInds = np.zeros((H, W)).astype(int) 
+    def __NMS(self, in_corners, height, width, dist_thresh):
+        mGrid = np.zeros((height, width)).astype(int) 
+        mInds = np.zeros((height, width)).astype(int) 
         
-        inds1 = np.argsort(-in_corners[2,:])
-        corners = in_corners[:,inds1]
-        rcorners = corners[:2,:].round().astype(int) 
+        uInds1 = np.argsort(-in_corners[2,:])
+        mCorners = in_corners[:,uInds1]
+        mRcorners = mCorners[:2,:].round().astype(int) 
         
-        if rcorners.shape[1] == 0:
+        if mRcorners.shape[1] == 0:
             return np.zeros((3,0)).astype(int), np.zeros(0).astype(int)
-        if rcorners.shape[1] == 1:
-            out = np.vstack((rcorners, in_corners[2])).reshape(3,1)
+        if mRcorners.shape[1] == 1:
+            out = np.vstack((mRcorners, in_corners[2])).reshape(3,1)
             return out, np.zeros((1)).astype(int)
         
-        for i, rc in enumerate(rcorners.T):
-            mGrid[rcorners[1,i], rcorners[0,i]] = 1
-            mInds[rcorners[1,i], rcorners[0,i]] = i
+        for i, rc in enumerate(mRcorners.T):
+            mGrid[mRcorners[1,i], mRcorners[0,i]] = 1
+            mInds[mRcorners[1,i], mRcorners[0,i]] = i
         
-        pad = dist_thresh
-        mGrid = np.pad(mGrid, ((pad,pad), (pad,pad)), mode='constant')
+        mGrid = np.pad(mGrid, ((dist_thresh,dist_thresh), (dist_thresh,dist_thresh)), mode='constant')
         
-        count = 0
-        for i, rc in enumerate(rcorners.T):
+        for i, r in enumerate(mRcorners.T):
         
-            pt = (rc[0]+pad, rc[1]+pad)
+            pt = (r[0]+dist_thresh, r[1]+dist_thresh)
             if mGrid[pt[1], pt[0]] == 1:
-                mGrid[pt[1]-pad:pt[1]+pad+1, pt[0]-pad:pt[0]+pad+1] = 0
+                mGrid[pt[1] - dist_thresh:pt[1] + dist_thresh + 1, pt[0] - dist_thresh:pt[0] + dist_thresh + 1] = 0
                 mGrid[pt[1], pt[0]] = -1
-                count += 1
         
-        keepy, keepx = np.where(mGrid==-1)
-        keepy, keepx = keepy - pad, keepx - pad
-        inds_keep = mInds[keepy, keepx]
-        out = corners[:, inds_keep]
-        values = out[-1, :]
-        inds2 = np.argsort(-values)
-        out = out[:, inds2]
-        out_inds = inds1[inds_keep[inds2]]
-        return out, out_inds
+        uKeepY, uKeepX = np.where(mGrid==-1)
+        uKeepY, uKeepX = uKeepY - dist_thresh, uKeepX - dist_thresh
+        uKeepInds = mInds[uKeepY, uKeepX]
+        mOutput = mCorners[:, uKeepInds]
+        vTemp = mOutput[-1, :]
+        vInds2 = np.argsort(-vTemp)
+        mOutput = mOutput[:, vInds2]
+        return mOutput
