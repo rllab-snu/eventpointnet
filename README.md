@@ -28,3 +28,6 @@ numpy 1.19.2
 ```
 
 Aside from above dependencies, docker container for this repository is provided [here](https://hub.docker.com/r/rllabsnu/eventpointnet)
+```
+docker pull rllabsnu/eventpointnet:base
+```
